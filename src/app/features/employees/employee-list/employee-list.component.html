@@ -1,0 +1,67 @@
+<div class="employee-list" aria-live="polite">
+  <p class="employee-list__loading" *ngIf="loading && employees.length === 0">Cargando empleados…</p>
+
+  <p class="employee-list__empty" *ngIf="!loading && employees.length === 0">
+    No hay empleados registrados todavía. Usa el formulario para agregar el primero.
+  </p>
+
+  <table class="employee-list__table" *ngIf="employees.length > 0">
+    <caption class="sr-only">Listado de empleados</caption>
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Cargo</th>
+        <th scope="col">Departamento</th>
+        <th scope="col" class="employee-list__amount-col">Sueldo</th>
+        <th scope="col" class="employee-list__actions-col">
+          <span class="sr-only">Acciones</span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let employee of employees; trackBy: trackById">
+        <td data-label="Nombre">{{ employee.nombre }}</td>
+        <td data-label="Cargo">{{ employee.cargo }}</td>
+        <td data-label="Departamento">{{ employee.departamento }}</td>
+        <td data-label="Sueldo" class="employee-list__amount-col">
+          {{ employee.sueldo | currency: 'USD' : 'symbol' : '1.2-2' : 'es-EC' }}
+        </td>
+        <td class="employee-list__actions-col">
+          <ng-container *ngIf="pendingDeleteId !== employee._id; else confirmRow">
+            <button
+              type="button"
+              class="button button--ghost button--small"
+              (click)="onEditClick(employee)"
+              [attr.aria-label]="'Editar a ' + employee.nombre"
+            >
+              Editar
+            </button>
+            <button
+              type="button"
+              class="button button--danger-ghost button--small"
+              (click)="requestDelete(employee)"
+              [attr.aria-label]="'Eliminar a ' + employee.nombre"
+            >
+              Eliminar
+            </button>
+          </ng-container>
+          <ng-template #confirmRow>
+            <span class="employee-list__confirm">
+              <span class="employee-list__confirm-text">¿Eliminar?</span>
+              <button
+                type="button"
+                class="button button--danger button--small"
+                (click)="confirmDelete(employee)"
+              >
+                Sí
+              </button>
+              <button type="button" class="button button--ghost button--small" (click)="cancelDelete()">
+                No
+              </button>
+            </span>
+          </ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

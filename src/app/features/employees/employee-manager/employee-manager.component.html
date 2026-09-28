@@ -1,0 +1,37 @@
+<ng-container *ngIf="vm$ | async as vm">
+  <header class="employee-manager__header">
+    <h1>Gestión de empleados</h1>
+    <span class="employee-manager__count">{{ vm.employees.length }} empleado{{ vm.employees.length === 1 ? '' : 's' }}</span>
+  </header>
+
+  <div
+    class="employee-manager__status"
+    *ngIf="vm.status as status"
+    [class.employee-manager__status--success]="status.type === 'success'"
+    [class.employee-manager__status--error]="status.type === 'error'"
+    role="status"
+  >
+    <span>{{ status.message }}</span>
+    <button type="button" class="employee-manager__status-close" (click)="dismissStatus()" aria-label="Cerrar aviso">
+      ✕
+    </button>
+  </div>
+
+  <div class="employee-manager__layout">
+    <app-employee-form
+      [employee]="selectedEmployee"
+      [saving]="vm.loading"
+      [fieldErrors]="vm.status?.fieldErrors ?? null"
+      (create)="handleCreate($event)"
+      (update)="handleUpdate($event)"
+      (cancelEdit)="handleCancelEdit()"
+    ></app-employee-form>
+
+    <app-employee-list
+      [employees]="vm.employees"
+      [loading]="vm.loading"
+      (edit)="handleEdit($event)"
+      (delete)="handleDelete($event)"
+    ></app-employee-list>
+  </div>
+</ng-container>
